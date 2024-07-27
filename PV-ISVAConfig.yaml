@@ -1,40 +1,41 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: isvaconfig-AAC
+  name: isvaconfig-aac
   labels:
-    app: isvaconfig-AAC
+    app: isvaconfig-aac
 spec:
   selector:
     matchLabels:
-      app: isvaconfig-AAC
+      app: isvaconfig-aac
   replicas: 1
   template:
     metadata:
       labels:
-        app: isvaconfig-AAC
+        app: isvaconfig-aac
     spec:
       securityContext:
         runAsNonRoot: true
         runAsUser:    6000
       volumes:
-        - name: isvaconfig-AAC
+        - name: isvaconfig-aac
           persistentVolumeClaim:
-            claimName: isvaconfig-AAC
-        - name: isvaconfigAAC-logs
+            claimName: isvaconfig-aac
+        - name: isvaconfigaac-logs
           emptyDir: {}
       containers:
-        - name: isvaconfig-AAC
+        - name: isvaconfig-aac
           image: icr.io/isva/verify-access:10.0.8.0
           volumeMounts:
             - mountPath: /var/shared
-              name: isvaconfig-AAC
+              name: isvaconfig-aac
             - mountPath: /var/application.logs
-              name: isvaconfigAAC-logs
+              name: isvaconfigaac-logs
           env:
             - name: CONTAINER_TIMEZONE
               value: Asia/Ho_Chi_Minh
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
             - name: ADMIN_PWD
               valueFrom:
                 secretKeyRef:
@@ -70,36 +71,36 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: isvaconfig-RP
+  name: isvaconfig-rp
   labels:
-    app: isvaconfig-RP
+    app: isvaconfig-rp
 spec:
   selector:
     matchLabels:
-      app: isvaconfig-RP
+      app: isvaconfig-rp
   replicas: 1
   template:
     metadata:
       labels:
-        app: isvaconfig-RP
+        app: isvaconfig-rp
     spec:
       securityContext:
         runAsNonRoot: true
         runAsUser:    6000
       volumes:
-        - name: isvaconfig-RP
+        - name: isvaconfig-rp
           persistentVolumeClaim:
-            claimName: isvaconfig-RP
-        - name: isvaconfigRP-logs
+            claimName: isvaconfig-rp
+        - name: isvaconfigrp-logs
           emptyDir: {}
       containers:
-        - name: isvaconfig-RP
+        - name: isvaconfig-rp
           image: icr.io/isva/verify-access:10.0.8.0
           volumeMounts:
             - mountPath: /var/shared
-              name: isvaconfig-RP
+              name: isvaconfig-rp
             - mountPath: /var/application.logs
-              name: isvaconfigRP-logs
+              name: isvaconfigrp-logs
           env:
             - name: CONTAINER_TIMEZONE
               value: Asia/Ho_Chi_Minh
@@ -138,23 +139,23 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: isvaconfig-AAC
+  name: isvaconfig-aac
 spec:
   ports:
     - port: 9443
-      name: isvaconfig-AAC
+      name: isvaconfig-aac
       protocol: TCP
   selector:
-    app: isvaconfig-AAC
+    app: isvaconfig-aac
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: isvaconfig-RP
+  name: isvaconfig-rp
 spec:
   ports:
     - port: 8443
-      name: isvaconfig-RP
+      name: isvaconfig-rp
       protocol: TCP
   selector:
-    app: isvaconfig-RP
+    app: isvaconfig-rp

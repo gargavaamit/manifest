@@ -8,7 +8,7 @@ spec:
   selector:
     matchLabels:
       app: isvarp-internal
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -24,14 +24,165 @@ spec:
           image: icr.io/isva/verify-access-wrp:10.0.8.0
           ports:
             - containerPort: 9443
+          resources:
+            requests:
+              cpu: "4"
+              memory: "7629Mi"
+            limits:
+              cpu: "4"
+              memory: "7629Mi"      
           volumeMounts:
             - mountPath: /var/shared
-              name: isvarp-internal
+              name: isvaconfig-rp
             - mountPath: /var/application.logs
               name: isvarp-internal-logs
           env:
             - name: INSTANCE
               value: isvarp-internal
+            - name: CONTAINER_TIMEZONE
+              value: Asia/Ho_Chi_Minh
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_URL
+              value: https://isvaconfig-rp:9443/shared_volume
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+              - livenessProbe
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 2
+          readinessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+      imagePullSecrets:
+        - name: dockerlogin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isvarp-external
+  labels:
+    app: isvarp-external
+spec:
+  selector:
+    matchLabels:
+      app: isvarp-external
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: isvarp-external
+    spec:
+      volumes:
+        - name: isvaconfig-rp
+          emptyDir: {}
+        - name: isvarp-external-logs
+          emptyDir: {}
+      containers:
+        - name: isvarp-external
+          image: icr.io/isva/verify-access-wrp:10.0.8.0
+          ports:
+            - containerPort: 9443
+          resources:
+            requests:
+              cpu: "4"
+              memory: "7629Mi"
+            limits:
+              cpu: "4"
+              memory: "7629Mi"      
+          volumeMounts:
+            - mountPath: /var/shared
+              name: isvaconfig-rp
+            - mountPath: /var/application.logs
+              name: isvarp-external-logs
+          env:
+            - name: INSTANCE
+              value: isvarp-external
+            - name: CONTAINER_TIMEZONE
+              value: Asia/Ho_Chi_Minh
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_URL
+              value: https://isvaconfig-rp:9443/shared_volume
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+              - livenessProbe
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 2
+          readinessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+      imagePullSecrets:
+        - name: dockerlogin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isvarp-users
+  labels:
+    app: isvarp-users
+spec:
+  selector:
+    matchLabels:
+      app: isvarp-users
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: isvarp-users
+    spec:
+      volumes:
+        - name: isvaconfig-rp
+          emptyDir: {}
+        - name: isvarp-users-logs
+          emptyDir: {}
+      containers:
+        - name: isvarp-users
+          image: icr.io/isva/verify-access-wrp:10.0.8.0
+          ports:
+            - containerPort: 9443
+          resources:
+            requests:
+              cpu: "4"
+              memory: "7629Mi"
+            limits:
+              cpu: "4"
+              memory: "7629Mi"      
+          volumeMounts:
+            - mountPath: /var/shared
+              name: isvaconfig-rp
+            - mountPath: /var/application.logs
+              name: isvarp-users-logs
+          env:
+            - name: INSTANCE
+              value: isvarp-users
             - name: CONTAINER_TIMEZONE
               value: Asia/Ho_Chi_Minh
             - name: CONFIG_SERVICE_TLS_CACERT
@@ -72,9 +223,41 @@ spec:
   type: NodePort
   sessionAffinity: ClientIP
   ports:
-    - port: 9443
+    - port: 7443
       name: isvarp-internal
       protocol: TCP
       nodePort: 30443
   selector:
-    app: isvawrprp1
+    app: isvarp-internal
+---
+# for external service access, see https://console.bluemix.net/docs/containers/cs_apps.html#cs_apps_public_nodeport
+apiVersion: v1
+kind: Service
+metadata:
+  name: isvarp-external
+spec:
+  type: NodePort
+  sessionAffinity: ClientIP
+  ports:
+    - port: 6443
+      name: isvarp-external
+      protocol: TCP
+      nodePort: 30443
+  selector:
+    app: isvarp-external
+---
+# for external service access, see https://console.bluemix.net/docs/containers/cs_apps.html#cs_apps_public_nodeport
+apiVersion: v1
+kind: Service
+metadata:
+  name: isvarp-users
+spec:
+  type: NodePort
+  sessionAffinity: ClientIP
+  ports:
+    - port: 5443
+      name: isvarp-users
+      protocol: TCP
+      nodePort: 30443
+  selector:
+    app: isvarp-users

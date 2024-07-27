@@ -1,0 +1,160 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isvaconfig-AAC
+  labels:
+    app: isvaconfig-AAC
+spec:
+  selector:
+    matchLabels:
+      app: isvaconfig-AAC
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: isvaconfig-AAC
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser:    6000
+      volumes:
+        - name: isvaconfig-AAC
+          persistentVolumeClaim:
+            claimName: isvaconfig-AAC
+        - name: isvaconfigAAC-logs
+          emptyDir: {}
+      containers:
+        - name: isvaconfig-AAC
+          image: icr.io/isva/verify-access:10.0.8.0
+          volumeMounts:
+            - mountPath: /var/shared
+              name: isvaconfig-AAC
+            - mountPath: /var/application.logs
+              name: isvaconfigAAC-logs
+          env:
+            - name: CONTAINER_TIMEZONE
+              value: Asia/Ho_Chi_Minh
+            - name: ADMIN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: isvaadmin
+                  key: adminpw
+          livenessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+              - livenessProbe
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              scheme: HTTPS
+              port: 9443
+              path: /core/login
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+          startupProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+            failureThreshold: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+#          command: [ "/sbin/bootstrap.sh" ]
+      imagePullSecrets:
+        - name: dockerlogin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isvaconfig-RP
+  labels:
+    app: isvaconfig-RP
+spec:
+  selector:
+    matchLabels:
+      app: isvaconfig-RP
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: isvaconfig-RP
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser:    6000
+      volumes:
+        - name: isvaconfig-RP
+          persistentVolumeClaim:
+            claimName: isvaconfig-RP
+        - name: isvaconfigRP-logs
+          emptyDir: {}
+      containers:
+        - name: isvaconfig-RP
+          image: icr.io/isva/verify-access:10.0.8.0
+          volumeMounts:
+            - mountPath: /var/shared
+              name: isvaconfig-RP
+            - mountPath: /var/application.logs
+              name: isvaconfigRP-logs
+          env:
+            - name: CONTAINER_TIMEZONE
+              value: Asia/Ho_Chi_Minh
+            - name: ADMIN_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: isvaadmin
+                  key: adminpw
+          livenessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+              - livenessProbe
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              scheme: HTTPS
+              port: 9443
+              path: /core/login
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+          startupProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+            failureThreshold: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+#          command: [ "/sbin/bootstrap.sh" ]
+      imagePullSecrets:
+        - name: dockerlogin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isvaconfig-AAC
+spec:
+  ports:
+    - port: 9443
+      name: isvaconfig-AAC
+      protocol: TCP
+  selector:
+    app: isvaconfig-AAC
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isvaconfig-RP
+spec:
+  ports:
+    - port: 8443
+      name: isvaconfig-RP
+      protocol: TCP
+  selector:
+    app: isvaconfig-RP

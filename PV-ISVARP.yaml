@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isvawrprp1
+  labels:
+    app: isvawrprp1
+spec:
+  selector:
+    matchLabels:
+      app: isvawrprp1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: isvawrprp1
+    spec:
+      volumes:
+        - name: isvaconfig
+          emptyDir: {}
+        - name: isvawrprp1-logs
+          emptyDir: {}
+      containers:
+        - name: isvawrprp1
+          image: icr.io/isva/verify-access-wrp:10.0.6.0
+          ports:
+            - containerPort: 9443
+          volumeMounts:
+            - mountPath: /var/shared
+              name: isvaconfig
+            - mountPath: /var/application.logs
+              name: isvawrprp1-logs
+          env:
+            - name: INSTANCE
+              value: rp1
+            - name: CONTAINER_TIMEZONE
+              value: Europe/London
+            - name: CONFIG_SERVICE_URL
+              value: https://isvaconfig:9443/shared_volume
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+              - livenessProbe
+            periodSeconds: 10
+            failureThreshold: 6
+            timeoutSeconds: 2
+          readinessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+      imagePullSecrets:
+        - name: dockerlogin

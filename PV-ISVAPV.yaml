@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: isvaconfig-AAC
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: efs.csi.aws.com
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: isvaconfig-RP
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: efs.csi.aws.com
+  resources:
+    requests:
+      storage: 5Gi

@@ -1,41 +1,43 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: isvawrprp1
+  name: isvarp-internal
   labels:
-    app: isvawrprp1
+    app: isvarp-internal
 spec:
   selector:
     matchLabels:
-      app: isvawrprp1
+      app: isvarp-internal
   replicas: 1
   template:
     metadata:
       labels:
-        app: isvawrprp1
+        app: isvarp-internal
     spec:
       volumes:
-        - name: isvaconfig
+        - name: isvaconfig-rp
           emptyDir: {}
-        - name: isvawrprp1-logs
+        - name: isvarp-internal-logs
           emptyDir: {}
       containers:
-        - name: isvawrprp1
-          image: icr.io/isva/verify-access-wrp:10.0.6.0
+        - name: isvarp-internal
+          image: icr.io/isva/verify-access-wrp:10.0.8.0
           ports:
             - containerPort: 9443
           volumeMounts:
             - mountPath: /var/shared
-              name: isvaconfig
+              name: isvarp-internal
             - mountPath: /var/application.logs
-              name: isvawrprp1-logs
+              name: isvarp-internal-logs
           env:
             - name: INSTANCE
-              value: rp1
+              value: isvarp-internal
             - name: CONTAINER_TIMEZONE
-              value: Europe/London
+              value: Asia/Ho_Chi_Minh
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
             - name: CONFIG_SERVICE_URL
-              value: https://isvaconfig:9443/shared_volume
+              value: https://isvaconfig-rp:9443/shared_volume
             - name: CONFIG_SERVICE_USER_NAME
               value: cfgsvc
             - name: CONFIG_SERVICE_USER_PWD
@@ -60,3 +62,19 @@ spec:
             failureThreshold: 2
       imagePullSecrets:
         - name: dockerlogin
+---
+# for external service access, see https://console.bluemix.net/docs/containers/cs_apps.html#cs_apps_public_nodeport
+apiVersion: v1
+kind: Service
+metadata:
+  name: isvarp-internal
+spec:
+  type: NodePort
+  sessionAffinity: ClientIP
+  ports:
+    - port: 9443
+      name: isvarp-internal
+      protocol: TCP
+      nodePort: 30443
+  selector:
+    app: isvawrprp1

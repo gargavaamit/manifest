@@ -26,6 +26,13 @@ spec:
       containers:
         - name: isvaconfig-aac
           image: icr.io/isva/verify-access:10.0.8.0
+          resources:
+            requests:
+              cpu: "2"
+              memory: "3814Mi"
+            limits:
+              cpu: "2"
+              memory: "3814Mi"
           volumeMounts:
             - mountPath: /var/shared
               name: isvaconfig-aac
@@ -96,6 +103,13 @@ spec:
       containers:
         - name: isvaconfig-rp
           image: icr.io/isva/verify-access:10.0.8.0
+          resources:
+            requests:
+              cpu: "2"
+              memory: "3814Mi"
+            limits:
+              cpu: "2"
+              memory: "3814Mi"          
           volumeMounts:
             - mountPath: /var/shared
               name: isvaconfig-rp
@@ -104,6 +118,8 @@ spec:
           env:
             - name: CONTAINER_TIMEZONE
               value: Asia/Ho_Chi_Minh
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
             - name: ADMIN_PWD
               valueFrom:
                 secretKeyRef:

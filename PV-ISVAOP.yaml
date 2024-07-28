@@ -17,11 +17,9 @@ spec:
         app: isvaop
     spec:
       volumes:
-        
-        - name: isvaop-config
+        - name: isvaconfig-aac
           configMap:
             name: isvaop-config
-
       containers:
         - name: isvaop
           # The fully qualified name of the ISVAOP image.
@@ -39,7 +37,6 @@ spec:
           volumeMounts:
             - mountPath: /var/shared
               name: isvaconfig-aac
-
           readinessProbe:
             httpGet:
               path: /healthcheck/ready

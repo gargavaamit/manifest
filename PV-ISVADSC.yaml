@@ -1,0 +1,175 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isvadsc-rp
+  labels:
+    app: isvadsc-rp
+spec:
+  selector:
+    matchLabels:
+      app: isvadsc-rp
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: isvadsc-rp
+    spec:
+      volumes:
+        - name: isvaconfig-rp
+          emptyDir: {}
+        - name: isvadsc-rp-logs
+          emptyDir: {}
+      containers:
+        - name: isvadsc-rp
+          image: icr.io/isva/verify-access-dsc:10.0.8.0
+          ports:
+            - containerPort: 9443
+            - containerPort: 9444
+          resources:
+            requests:
+              cpu: "2"
+              memory: "3814Mi"
+            limits:
+              cpu: "2"
+              memory: "3814Mi"          
+          volumeMounts:
+            - mountPath: /var/shared
+              name: isvaconfig-rp
+            - mountPath: /var/application.logs
+              name: isvadsc-rp-logs
+          env:
+            - name: INSTANCE
+              value: '1'
+            - name: CONTAINER_TIMEZONE
+              value: Asia/Ho_Chi_Minh
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_URL
+              value: https://isvaconfig-rp:9443/shared_volume
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+              - livenessProbe
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+      imagePullSecrets:
+        - name: dockerlogin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isvadsc-aac
+  labels:
+    app: isvadsc-aac
+spec:
+  selector:
+    matchLabels:
+      app: isvadsc-aac
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: isvadsc-aac
+    spec:
+      volumes:
+        - name: isvaconfig-aac
+          emptyDir: {}
+        - name: isvadsc-aac-logs
+          emptyDir: {}
+      containers:
+        - name: isvadsc-aac
+          image: icr.io/isva/verify-access-dsc:10.0.8.0
+          ports:
+            - containerPort: 9443
+            - containerPort: 9444
+          resources:
+            requests:
+              cpu: "2"
+              memory: "3814Mi"
+            limits:
+              cpu: "2"
+              memory: "3814Mi"          
+          volumeMounts:
+            - mountPath: /var/shared
+              name: isvaconfig-rp
+            - mountPath: /var/application.logs
+              name: isvadsc-aac-logs
+          env:
+            - name: INSTANCE
+              value: '1'
+            - name: CONTAINER_TIMEZONE
+              value: Asia/Ho_Chi_Minh
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_URL
+              value: https://isvaconfig-rp:9443/shared_volume
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+              - livenessProbe
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 2
+      imagePullSecrets:
+        - name: dockerlogin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isvadsc-aac
+spec:
+  ports:
+    - port: 9443
+      name: isvadsc-aac-svc
+      protocol: TCP
+    - port: 9444
+      name: isvadsc-aac-rep
+      protocol: TCP
+  selector:
+    app: isvadsc-aac
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isvadsc-rp
+spec:
+  ports:
+    - port: 9443
+      name: isvadsc-rp-svc
+      protocol: TCP
+    - port: 9444
+      name: isvadsc-rp-rep
+      protocol: TCP
+  selector:
+    app: isvadsc-rp

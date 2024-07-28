@@ -37,8 +37,8 @@ spec:
           volumeMounts:
           # Mount our volumes to the expected configuration directory
           volumeMounts:
-            - name: isvaconfig-aac
-              mountPath: /var/isvaop/config
+            - mountPath: /var/shared
+              name: isvaconfig-aac
 
           readinessProbe:
             httpGet:

@@ -31,8 +31,7 @@ spec:
               memory: "3814Mi"
             limits:
               cpu: "2"
-              memory: "3814Mi"          
-          volumeMounts:
+              memory: "3814Mi"
           # Mount our volumes to the expected configuration directory
           volumeMounts:
             - mountPath: /var/shared
@@ -69,7 +68,7 @@ spec:
   ports:
     - port: 8436
       name: isvaop
-      nodePort: 31443
+      nodePort: 30446 
   selector:
     app: isvaop
   type: NodePort

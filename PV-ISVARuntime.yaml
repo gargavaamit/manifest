@@ -33,7 +33,7 @@ spec:
               memory: "7629Mi"
           volumeMounts:
             - mountPath: /var/shared
-              name: isvaconfig
+              name: isvaconfig-aac
             - mountPath: /var/application.logs
               name: isvaruntime-logs
           env:

@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: isvaruntime
+  labels:
+    app: isvaruntime
+spec:
+  selector:
+    matchLabels:
+      app: isvaruntime
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: isvaruntime
+    spec:
+      volumes:
+        - name: isvaconfig-aac
+          emptyDir: {}
+        - name: isvaruntime-logs
+          emptyDir: {}
+      containers:
+        - name: isvaruntime
+          image: icr.io/isva/verify-access-runtime:10.0.8.0
+          ports:
+            - containerPort: 9443
+          resources:
+            requests:
+              cpu: "4"
+              memory: "7629Mi"
+            limits:
+              cpu: "4"
+              memory: "7629Mi"
+          volumeMounts:
+            - mountPath: /var/shared
+              name: isvaconfig
+            - mountPath: /var/application.logs
+              name: isvaruntime-logs
+          env:
+            - name: CONTAINER_TIMEZONE
+              value: Asia/Ho_Chi_Minh
+            - name: CONFIG_SERVICE_TLS_CACERT
+              value: disabled
+            - name: CONFIG_SERVICE_URL
+              value: https://isvaconfig-aac:9443/shared_volume
+            - name: CONFIG_SERVICE_USER_NAME
+              value: cfgsvc
+            - name: CONFIG_SERVICE_USER_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: configreader
+                  key: cfgsvcpw
+          livenessProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+              - livenessProbe
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 6
+          readinessProbe:
+            httpGet:
+              scheme: HTTPS
+              port: 9443
+              path: /sps/static/ibm-logo.png
+            periodSeconds: 10
+            failureThreshold: 2
+            timeoutSeconds: 2
+          startupProbe:
+            exec:
+              command:
+              - /sbin/health_check.sh
+            failureThreshold: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+      imagePullSecrets:
+        - name: dockerlogin
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: isvaruntime
+spec:
+  ports:
+    - port: 9443
+      name: isvaruntime
+      protocol: TCP
+  selector:
+    app: isvaruntime

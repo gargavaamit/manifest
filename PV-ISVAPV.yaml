@@ -5,7 +5,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: efs.csi.aws.com
+  storageClassName: efs
   resources:
     requests:
       storage: 5Gi
@@ -17,7 +17,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: efs.csi.aws.com
+  storageClassName: efs
   resources:
     requests:
       storage: 5Gi

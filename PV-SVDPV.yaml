@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: svd-pv
+  name: isvd-claim
 spec:
   accessModes:
     - ReadWriteOnce

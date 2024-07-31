@@ -173,7 +173,10 @@ spec:
         # The port on which the container will be listening.
         ports:
         - containerPort: 9636
-
+        resources:
+          limits: #Reserve the minimum CPU and RAM for the config container
+            memory: "1024Mi"
+            cpu: "500m"
         # Environment definition.
         env:
         - name: YAML_CONFIG_FILE

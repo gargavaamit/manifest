@@ -174,7 +174,7 @@ spec:
       - name: isvd-server
 
         # The fully qualified name of the image.
-        image: icr.io/isvd/verify-directory-server:10.0.2
+        image: icr.io/isvd/verify-directory-server:latest
 
         # The port on which the container will be listening.
         ports:

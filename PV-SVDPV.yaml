@@ -6,6 +6,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   storageClassName: gp3
+  volumeMode: Filesystem
   resources:
     requests:
       storage: 100Gi

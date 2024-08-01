@@ -159,7 +159,13 @@ spec:
       # The name of the service account which has the required
       # capabilities enabled for the isvd container.
       serviceAccountName: isvd
-
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 70
+        runAsGroup: 1001
+        fsGroup: 0
+        fsGroupChangePolicy: "Always"
+      
       # We use a volume to store the configuration for the
       # environment.
       volumes:

@@ -161,7 +161,7 @@ spec:
       serviceAccountName: isvd
       securityContext:
         runAsNonRoot: true
-        runAsUser: 70
+        runAsUser: 777
         runAsGroup: 1001
         fsGroup: 0
         fsGroupChangePolicy: "Always"

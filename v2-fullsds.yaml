@@ -132,22 +132,7 @@ data:
       keys:
       - label: 'server-key'
         key: "@/var/isvd/config/server.pem"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: isvd-claim
-  labels:
-    billingType: "hourly"
-    region: au-syd
-    zone: syd04
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 45Gi
-  storageClassName: standard
+
 
 ---
 #

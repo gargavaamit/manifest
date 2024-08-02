@@ -5,8 +5,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: efs
+  storageClassName: gp3
   resources:
     requests:
       storage: 45Gi
-  storageClassName: standard

@@ -207,7 +207,7 @@ spec:
   - port: 9443
     name: isvd-webadmin
     protocol: TCP
-    nodePort: 30443
+    nodePort: 30447
 
   selector:
     app: isvd-webadmin

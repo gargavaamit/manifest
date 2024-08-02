@@ -8,7 +8,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: server-config
-  namespace: dev-ibm-ciam
 data:
   server.pem: |
     -----BEGIN PRIVATE KEY-----
@@ -98,16 +97,16 @@ data:
   config.yaml: |
     general:
       ports:
-        ldap:  0
+        ldap:  9389
         ldaps: 9636
-
       id: pvcomsds
 
       license:
         key: "R2VuZXJpYzotMToxOjCCAacGCSqGSIb3DQEHAqCCAZgwggGUAgEBMQ8wDQYJYIZIAWUDBAIBBQAwGwYJKoZIhvcNAQcBoA4EDEdlbmVyaWM6LTE6MaAAMYIBXTCCAVkCAQEwSDA8MQswCQYDVQQGEwJ1czEMMAoGA1UEChMDaWJtMQ0wCwYDVQQLEwRpc3ZhMRAwDgYDVQQDEwdzaWduaW5nAgh4PC0gxTSNfzANBglghkgBZQMEAgEFAKBpMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIyMTAxMDA2NTgyN1owLwYJKoZIhvcNAQkEMSIEICNI9qWOUQ1SXQXNbnOMT5HDinpaosSdz13WyWX2XFLiMA0GCSqGSIb3DQEBAQUABIGARibpp/5rnoMDqO9rOSKFwx3m0bbYGgvkiJtDbHcRHTzErgvxqpYV0NLa9CpsCrzySCxiC2v5Xh4XhkalH6IABYWv+ZWRkh1aen8lshEYR1EAgs8llh3FmQ9xRGTJp1XkacRx3XI/s5dNNtWGEqoc1eX3cCXIG9WvO7Uoxc84b+I="
         accept: standard
 
-      admin:
+      admin: 
+        dn: cn=root
         pwd: passw0rd1
 
       ssl:
@@ -115,12 +114,30 @@ data:
 
       audit:
         enabled: true
+        log-to-file: true
+        operation:
+          add: true
+          bind: true
+          compare: true
+          delete: true
+          extended-op: true
+          extended-op-event: true
+          modify: true
+          modify-dn: true
+          search: true
+          unbind: true
 
     server:
       suffixes:
-      - dn: dc=pvcom
+      - dn: o=sample
         object-classes:
-        - domain
+        - organization
+      - dn: secAuthority=Default
+        object-classes:
+        - secAuthorityInfo
+        attributes:
+        - secAuthority=Default
+        - version=6.0
 
       change-log:
         enabled: false
@@ -132,8 +149,6 @@ data:
       keys:
       - label: 'server-key'
         key: "@/var/isvd/config/server.pem"
-
-
 ---
 #
 # The deployment description of the Verify Directory server container.
@@ -161,6 +176,9 @@ spec:
       # The name of the service account which has the required
       # capabilities enabled for the isvd container.
       serviceAccountName: isvd
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
 
       # We use a volume to store the configuration for the
       # environment.

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: webadmin-config
-  namespace: default
+  namespace: dev-ibm-ciam
 data:
   server.pem: |
     -----BEGIN PRIVATE KEY-----
@@ -105,7 +105,7 @@ data:
     webadmin:
       servers:
       - label: my-ldap-server
-        host: 192.168.49.2
+        host: 10.212.138.243
         port: 9636
         secure: true
         admin-port: 0

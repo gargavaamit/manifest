@@ -170,7 +170,7 @@ metadata:
   name: isvaconfig-rp
 spec:
   ports:
-    - port: 8443
+    - port: 9443
       name: isvaconfig-rp
       protocol: TCP
   selector:

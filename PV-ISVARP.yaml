@@ -242,7 +242,7 @@ spec:
     - port: 6443
       name: isvarp-external
       protocol: TCP
-      nodePort: 30443
+      nodePort: 30444
   selector:
     app: isvarp-external
 ---
@@ -258,6 +258,6 @@ spec:
     - port: 5443
       name: isvarp-users
       protocol: TCP
-      nodePort: 30443
+      nodePort: 30445
   selector:
     app: isvarp-users

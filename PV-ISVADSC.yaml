@@ -24,7 +24,6 @@ spec:
           image: icr.io/isva/verify-access-dsc:10.0.8.0
           ports:
             - containerPort: 9443
-            - containerPort: 9444
           resources:
             requests:
               cpu: "2"
@@ -45,7 +44,7 @@ spec:
             - name: CONFIG_SERVICE_TLS_CACERT
               value: disabled
             - name: CONFIG_SERVICE_URL
-              value: https://isvaconfig-rp:9443/shared_volume
+              value: https://isvaconfig-rp:8443/shared_volume
             - name: CONFIG_SERVICE_USER_NAME
               value: cfgsvc
             - name: CONFIG_SERVICE_USER_PWD
@@ -97,7 +96,6 @@ spec:
           image: icr.io/isva/verify-access-dsc:10.0.8.0
           ports:
             - containerPort: 9443
-            - containerPort: 9444
           resources:
             requests:
               cpu: "2"
@@ -107,7 +105,7 @@ spec:
               memory: "3814Mi"          
           volumeMounts:
             - mountPath: /var/shared
-              name: isvaconfig-rp
+              name: isvaconfig-aac
             - mountPath: /var/application.logs
               name: isvadsc-aac-logs
           env:
@@ -118,7 +116,7 @@ spec:
             - name: CONFIG_SERVICE_TLS_CACERT
               value: disabled
             - name: CONFIG_SERVICE_URL
-              value: https://isvaconfig-rp:9443/shared_volume
+              value: https://isvaconfig-aac:9443/shared_volume
             - name: CONFIG_SERVICE_USER_NAME
               value: cfgsvc
             - name: CONFIG_SERVICE_USER_PWD

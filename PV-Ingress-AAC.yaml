@@ -1,7 +1,7 @@
  apiVersion: networking.k8s.io/v1
  kind: Ingress
  metadata:
-   name: isvaconfig
+   name: isvaconfig-aac
    annotations:
      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
  spec:
@@ -20,3 +20,26 @@
             name: isvaconfig-aac
             port:
               number: 9443
+---
+ apiVersion: networking.k8s.io/v1
+ kind: Ingress
+ metadata:
+   name: isvaconfig-rp
+   annotations:
+     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+ spec:
+  ingressClassName: nginx-apps
+  tls:
+  - hosts:
+    - isvaconfig-rp.apps.svam.nonprod.pvcombank.io
+  rules:
+  - host: isvaconfig-rp.apps.svam.nonprod.pvcombank.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: isvaconfig-rp
+            port:
+              number: 8443

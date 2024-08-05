@@ -42,4 +42,4 @@
           service:
             name: isvaconfig-rp
             port:
-              number: 8443
+              number: 9443

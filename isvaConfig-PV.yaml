@@ -21,3 +21,6 @@ spec:
   resources:
     requests:
       storage: 5Gi
+
+
+      https://truststore.pki.rds.amazonaws.com/ap-southeast-1/ap-southeast-1-bundle.pem

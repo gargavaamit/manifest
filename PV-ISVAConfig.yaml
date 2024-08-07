@@ -16,7 +16,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser:    6000
+        runAsUser: 1000
+        fsGroup: 1000
       volumes:
         - name: isvaconfig-aac
           persistentVolumeClaim:
@@ -93,7 +94,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser:    6000
+        runAsUser: 1000
+        fsGroup: 1000
       volumes:
         - name: isvaconfig-rp
           persistentVolumeClaim:

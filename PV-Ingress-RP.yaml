@@ -9,9 +9,9 @@ spec:
   ingressClassName: nginx-apps
   tls:
   - hosts:
-    - external.apps.svam.nonprod.pvcombank.io
+    - isvarp-external.apps.svam.nonprod.pvcombank.io
   rules:
-  - host: external.apps.svam.nonprod.pvcombank.io
+  - host: isvarp-external.apps.svam.nonprod.pvcombank.io
     http:
       paths:
       - path: /

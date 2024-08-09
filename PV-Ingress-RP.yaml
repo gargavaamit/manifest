@@ -4,6 +4,7 @@ metadata:
    name: isvarp-external
    annotations:
      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+     nginx.ingress.kubernetes.io/affinity: "cookie"
 spec:
   ingressClassName: nginx-apps
   tls:

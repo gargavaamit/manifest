@@ -80,7 +80,7 @@ spec:
   selector:
     matchLabels:
       app: isvarp-external
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:
@@ -239,7 +239,7 @@ spec:
   type: NodePort
   sessionAffinity: ClientIP
   ports:
-    - port: 6443
+    - port: 9443
       name: isvarp-external
       protocol: TCP
       nodePort: 30444

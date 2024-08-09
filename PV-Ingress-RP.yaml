@@ -17,6 +17,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: external-RP
+            name: external-rp
             port:
               number: 9443

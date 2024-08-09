@@ -24,6 +24,7 @@ spec:
           image: icr.io/isva/verify-access-dsc:10.0.8.0
           ports:
             - containerPort: 9443
+            - containerPort: 9444
           resources:
             requests:
               cpu: "2"
@@ -96,6 +97,7 @@ spec:
           image: icr.io/isva/verify-access-dsc:10.0.8.0
           ports:
             - containerPort: 9443
+            - containerPort: 9444            
           resources:
             requests:
               cpu: "2"

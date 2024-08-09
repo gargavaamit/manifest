@@ -43,3 +43,26 @@
             name: isvaconfig-rp
             port:
               number: 9443
+---
+ apiVersion: networking.k8s.io/v1
+ kind: Ingress
+ metadata:
+   name: isvarp-external
+   annotations:
+     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+ spec:
+  ingressClassName: nginx-apps
+  tls:
+  - hosts:
+    - isvarp-external.apps.svam.nonprod.pvcombank.io
+  rules:
+  - host: isvarp-external.apps.svam.nonprod.pvcombank.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: isvarp-external
+            port:
+              number: 9443

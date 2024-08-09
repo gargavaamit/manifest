@@ -1,68 +1,22 @@
- apiVersion: networking.k8s.io/v1
- kind: Ingress
- metadata:
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
    name: isvarp-external
    annotations:
      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
- spec:
+spec:
   ingressClassName: nginx-apps
   tls:
   - hosts:
-    - isvarp-external.apps.svam.nonprod.pvcombank.io
+    - external.apps.svam.nonprod.pvcombank.io
   rules:
-  - host: isvarp-external.apps.svam.nonprod.pvcombank.io
+  - host: external.apps.svam.nonprod.pvcombank.io
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: isvarp-external
+            name: external-RP
             port:
-              number: 6443
----
- apiVersion: networking.k8s.io/v1
- kind: Ingress
- metadata:
-   name: isvarp-internal
-   annotations:
-     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
- spec:
-  ingressClassName: nginx-apps
-  tls:
-  - hosts:
-    - isvarp-internal.apps.svam.nonprod.pvcombank.io
-  rules:
-  - host: isvarp-internal.apps.svam.nonprod.pvcombank.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: isvarp-internal
-            port:
-              number: 7443
----
- apiVersion: networking.k8s.io/v1
- kind: Ingress
- metadata:
-   name: isvarp-users
-   annotations:
-     nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
- spec:
-  ingressClassName: nginx-apps
-  tls:
-  - hosts:
-    - isvarp-users.apps.svam.nonprod.pvcombank.io
-  rules:
-  - host: isvarp-users.apps.svam.nonprod.pvcombank.io
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: isvarp-users
-            port:
-              number: 5443
+              number: 9443

@@ -44,7 +44,7 @@ spec:
             - name: CONFIG_SERVICE_TLS_CACERT
               value: disabled
             - name: CONFIG_SERVICE_URL
-              value: https://isvaconfig-rp:8443/shared_volume
+              value: https://isvaconfig-rp:9443/shared_volume
             - name: CONFIG_SERVICE_USER_NAME
               value: cfgsvc
             - name: CONFIG_SERVICE_USER_PWD
